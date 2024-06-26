@@ -48,6 +48,7 @@ bool isOperator(const QString& token, QList<Error>& errors) {
     return operators.contains(token);
 }
 
+
 // Функция для проверки, является ли токен операндом
 bool isValidOperand(const QString& token, QList<Error>& errors) {
     // Проверяем, является ли токен пустым
@@ -152,6 +153,8 @@ TreeNode* buildLogicalTree(const QString& inequality, QList<Error>& errors) {
     return stack.takeFirst();
 }
 
+
+
 // Функция для определения приоритета оператора
 int getPriority(const QString& node) {
     if (node == "!" || node == "_+" || node == "_-") {
@@ -210,6 +213,8 @@ QString treeToString(TreeNode* root, QList<Error>& errors) {
     return result.trimmed(); // Возвращаем результирующую строку без лишних пробелов в конце
 }
 
+
+
 // Функция для преобразования неравенства к операции "меньше"
 void convertToLess(TreeNode*& root, QList<Error>& errors) {
     if (root==nullptr) {
@@ -257,4 +262,3 @@ void convertToLess(TreeNode*& root, QList<Error>& errors) {
     convertToLess(root->left, errors);
     convertToLess(root->right, errors);
 }
-
