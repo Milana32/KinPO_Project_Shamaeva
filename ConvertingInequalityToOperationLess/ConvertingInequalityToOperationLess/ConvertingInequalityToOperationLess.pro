@@ -9,6 +9,7 @@ CONFIG += c++17 cmdline
 
 SOURCES += \
         error.cpp \
+        functions.cpp \
         main.cpp \
         tree.cpp
 
@@ -19,4 +20,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     error.h \
+    functions.h \
     tree.h
