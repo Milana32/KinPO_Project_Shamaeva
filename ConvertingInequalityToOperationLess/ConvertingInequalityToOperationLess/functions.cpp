@@ -152,6 +152,20 @@ TreeNode* buildLogicalTree(const QString& inequality, QList<Error>& errors) {
     return stack.takeFirst();
 }
 
+// Функция для определения приоритета оператора
+int getPriority(const QString& node) {
+    if (node == "!" || node == "_+" || node == "_-") {
+        return 4; // Унарные операторы имеют приоритет 4
+    } else if (node == "<" || node == ">" || node == "<=" || node == ">=") {
+        return 1; // Операторы сравнения имеют приоритет 1
+    } else if (node == "*" || node == "/" || node == "%") {
+        return 3; // Операторы умножения, деления и остатка от деления имеют приоритет 3
+    } else if (node == "+" || node == "-") {
+        return 2; // Операторы сложения и вычитания имеют приоритет 2
+    } else {
+        return 0; // Неизвестный оператор имеет приоритет 0
+    }
+}
 
 // Функция для преобразования неравенства к операции "меньше"
 void convertToLess(TreeNode*& root, QList<Error>& errors) {
