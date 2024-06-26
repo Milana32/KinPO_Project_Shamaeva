@@ -25,7 +25,26 @@ class Tests : public QObject
 
 private slots:
 
+    void testisOperator();
+    void testisOperator_data();
 
+    void testisValidOperand();
+    void testisValidOperand_data();
+
+    void testbuildLogicalTree();
+    void testbuildLogicalTree_data();
+
+    void testConvertToLess();
+    void testConvertToLess_data();
+
+    void testTreeToString();
+    void testTreeToString_data();
+
+
+
+private:
+    bool compareTrees(TreeNode* tree1, TreeNode* tree2);
+    bool compareNodes(TreeNode* node1, TreeNode* node2);
 };
 
 #endif // TESTS_H
