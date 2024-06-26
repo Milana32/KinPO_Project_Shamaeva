@@ -9,7 +9,7 @@
 #include <QCoreApplication>
 #include <QtTest/QtTest>
 #include "functions.h"
-#include "Tree.h"
+#include "tree.h"
 
 /*!
  * \brief Запускает тестирование всех функций
@@ -40,10 +40,9 @@ private slots:
     void testTreeToString();
     void testTreeToString_data();
 
-
-
 private:
-
+    bool compareTrees(TreeNode* tree1, TreeNode* tree2);
+    bool compareNodes(TreeNode* node1, TreeNode* node2);
 };
 
 #endif // TESTS_H
