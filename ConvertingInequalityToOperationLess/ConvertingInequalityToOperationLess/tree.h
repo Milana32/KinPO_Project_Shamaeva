@@ -67,28 +67,4 @@ struct TreeNode {
     }
 };
 
-
-/*!
- * \brief Структура, представляющая унарный узел дерева.
- */
-struct UnaryTreeNode : public TreeNode {
-    /*!
-     * \brief Конструктор унарного узла дерева.
-     * \param [in] val Значение узла.
-     */
-    UnaryTreeNode(const QString& val)
-        : TreeNode(val, TreeNodeType::OPER_UNARY, nullptr, nullptr) {}
-
-    /*!
-     * \brief // Перегрузка оператора ==
-     */
-    bool operator==(const TreeNode& other) const {
-        if (const UnaryTreeNode* otherUnary = dynamic_cast<const UnaryTreeNode*>(&other)) {
-            return value == otherUnary->value && type == otherUnary->type &&
-                   ((right == nullptr && otherUnary->right == nullptr) || (right && otherUnary->right && *right == *otherUnary->right));
-        }
-        return false;
-    }
-};
-
 #endif // TREE_H
