@@ -139,7 +139,7 @@ void Tests::testbuildLogicalTree_data()
     // Test 6 Только операторы: + !
     TreeNode* opTree = nullptr;
 
-    // Test 7 Ошибка только в начале: \ A B + >
+    // Test 7 Ошибка только в начале: * A B + >
     TreeNode* errorStartTree = nullptr;
 
     // Test 8 Ошибка только в конце: A B + > *
@@ -168,7 +168,7 @@ void Tests::testbuildLogicalTree_data()
     QTest::newRow("Basic test") << "7 5 >" << "" << basicTree;
     QTest::newRow("Only variables") << "A B C" << "NOT_ENOUGH_OPERATORS" << varTree;
     QTest::newRow("Only operators") << "+ !" << "INVALID_TOKEN\nNOT_ENOUGH_ARGUMENTS" << opTree;
-    QTest::newRow("Error at start") << "\ A B + >" << "INVALID_TOKEN\nINVALID_TOKEN\nNOT_ENOUGH_ARGUMENTS" << errorStartTree;
+    QTest::newRow("Error at start") << "* A B + >" << "INVALID_TOKEN\nNOT_ENOUGH_ARGUMENTS" << errorStartTree;
     QTest::newRow("Error at end") << "A B + > *" << "INVALID_TOKEN\nINVALID_TOKEN\nNOT_ENOUGH_ARGUMENTS" << errorEndTree;
     QTest::newRow("Negation of variable") << "5 !" << "INVALID_TOKEN\nINCORRECT_USE_OF_NEGATION" << negTree;
     QTest::newRow("Complex expression") << "3 10 * 1 + 51 <=" << "" << complexTree;
@@ -299,7 +299,6 @@ void Tests::testConvertToLess_data()
     node2 = new TreeNode("10", TreeNodeType::VALUE);
     node3 = new TreeNode(">=", TreeNodeType::OPER_GREATER_OR_EQUAL, node1, node2);
     TreeNode* negateNode2 = new TreeNode("!", TreeNodeType::OPER_NEGATION, nullptr, node3);
-    TreeNode* expected2 = new TreeNode("<", TreeNodeType::OPER_LESS_THAN, node2, node1);
     QTest::newRow("greater_or_equal") << node3 << negateNode2;
 
     // Test 3: Преобразование оператора <=
@@ -307,7 +306,6 @@ void Tests::testConvertToLess_data()
     node2 = new TreeNode("16", TreeNodeType::VALUE);
     node3 = new TreeNode("<=", TreeNodeType::OPER_LESS_OR_EQUAL, node1, node2);
     TreeNode* negateNode3 = new TreeNode("!", TreeNodeType::OPER_NEGATION, nullptr, node3);
-    TreeNode* expected3 = new TreeNode("<", TreeNodeType::OPER_LESS_THAN, node1, node2);
     QTest::newRow("less_or_equal") << node3 << negateNode3;
 
     // Test 4: Отсутствие операторов сравнения
@@ -336,8 +334,6 @@ void Tests::testConvertToLess_data()
     TreeNode* node8_left = new TreeNode("*", TreeNodeType::OPER_MULTIPLICATION, new TreeNode("3", TreeNodeType::VALUE), new TreeNode("10", TreeNodeType::VALUE));
     TreeNode* node8 = new TreeNode(">=", TreeNodeType::OPER_GREATER_OR_EQUAL, node8_left, node1);
     TreeNode* negateNode8 = new TreeNode("!", TreeNodeType::OPER_NEGATION, nullptr, node8);
-    TreeNode* expected8_left = new TreeNode("*", TreeNodeType::OPER_MULTIPLICATION, new TreeNode("3", TreeNodeType::VALUE), new TreeNode("10", TreeNodeType::VALUE));
-    TreeNode* expected8 = new TreeNode("<", TreeNodeType::OPER_LESS_THAN, node1, expected8_left);
     QTest::newRow("complex_greater_or_equal") << node8 << negateNode8;
 
     // Test 9: Преобразование сложного дерева с "<="
@@ -346,8 +342,6 @@ void Tests::testConvertToLess_data()
     TreeNode* node9_left = new TreeNode("*", TreeNodeType::OPER_MULTIPLICATION, new TreeNode("3", TreeNodeType::VALUE), new TreeNode("10", TreeNodeType::VALUE));
     TreeNode* node9 = new TreeNode("<=", TreeNodeType::OPER_LESS_OR_EQUAL, node9_left, node1);
     TreeNode* negateNode9 = new TreeNode("!", TreeNodeType::OPER_NEGATION, nullptr, node9);
-    TreeNode* expected9_left = new TreeNode("*", TreeNodeType::OPER_MULTIPLICATION, new TreeNode("3", TreeNodeType::VALUE), new TreeNode("10", TreeNodeType::VALUE));
-    TreeNode* expected9 = new TreeNode("<", TreeNodeType::OPER_LESS_THAN, node1, expected9_left);
     QTest::newRow("complex_less_or_equal") << node9 << negateNode9;
 
     // Test 10: Отсутствие оператора сравнения в глубоком дереве
