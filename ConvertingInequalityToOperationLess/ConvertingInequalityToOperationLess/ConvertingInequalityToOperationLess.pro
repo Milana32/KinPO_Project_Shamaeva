@@ -11,6 +11,7 @@ SOURCES += \
         error.cpp \
         functions.cpp \
         main.cpp \
+        tests.cpp \
         tree.cpp
 
 # Default rules for deployment.
@@ -21,4 +22,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     error.h \
     functions.h \
+    tests.h \
     tree.h
