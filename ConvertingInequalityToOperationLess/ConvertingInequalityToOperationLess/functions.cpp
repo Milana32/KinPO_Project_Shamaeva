@@ -167,6 +167,49 @@ int getPriority(const QString& node) {
     }
 }
 
+// Функция для преобразования дерева логического выражения в строку в инфиксной записи
+QString treeToString(TreeNode* root, QList<Error>& errors) {
+    if (root==nullptr) {
+        errors.append(Error(ErrorType::EMPTY_NODE, 0, ""));
+        return "EMPTY_NODE";
+    }
+
+    QString result;
+
+    // Обрабатываем левое поддерево
+    if (root->left) {
+        QString leftStr = treeToString(root->left, errors);
+        int rootPriority = getPriority(root->value);
+        int leftPriority = getPriority(root->left->value);
+
+        // Добавляем скобки вокруг левого поддерева, если приоритет оператора левее выше
+        if (leftPriority != 0 && leftPriority < rootPriority) {
+            result += "(" + leftStr + ")";
+        } else {
+            result += leftStr;
+        }
+    }
+
+    // Добавляем значение текущий узел к результату
+    result += " " + root->value + " ";
+
+    // Обрабатываем правое поддерево
+    if (root->right) {
+        QString rightStr = treeToString(root->right, errors);
+        int rootPriority = getPriority(root->value);
+        int rightPriority = getPriority(root->right->value);
+
+        // Добавляем скобки вокруг правого поддерева, если приоритет оператора правее выше
+        if (rightPriority != 0 && rightPriority < rootPriority) {
+            result += "(" + rightStr + ")";
+        } else {
+            result += rightStr;
+        }
+    }
+
+    return result.trimmed(); // Возвращаем результирующую строку без лишних пробелов в конце
+}
+
 // Функция для преобразования неравенства к операции "меньше"
 void convertToLess(TreeNode*& root, QList<Error>& errors) {
     if (root==nullptr) {
