@@ -40,6 +40,14 @@ QStringList getStringsFromFile(const QString& filePath, QList<Error>& errors) {
     return result; // Возвращаем список строк из файла (должен содержать одну строку)
 }
 
+// Функция для проверки, является ли токен оператором
+bool isOperator(const QString& token, QList<Error>& errors) {
+    // Список допустимых операторов
+    QStringList operators = {">", ">=", "<", "<=", "+", "-", "*", "/", "%", "!", "_-", "_+"};
+    // Проверяем, содержится ли токен в списке операторов
+    return operators.contains(token);
+}
+
 
 // Функция для преобразования неравенства к операции "меньше"
 void convertToLess(TreeNode*& root, QList<Error>& errors) {
