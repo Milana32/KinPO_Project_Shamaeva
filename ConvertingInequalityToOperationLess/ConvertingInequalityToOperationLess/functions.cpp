@@ -48,6 +48,39 @@ bool isOperator(const QString& token, QList<Error>& errors) {
     return operators.contains(token);
 }
 
+// Функция для проверки, является ли токен операндом
+bool isValidOperand(const QString& token, QList<Error>& errors) {
+    // Проверяем, является ли токен пустым
+    if (token.isEmpty()) {
+        errors.append(Error(ErrorType::EMPTY_NODE, 0, token));
+        return false;
+    }
+
+    bool isNumber;
+    // Пробуем преобразовать токен в число
+    qint64 number = token.toLongLong(&isNumber);
+
+    if (isNumber) {
+        // Проверяем, входит ли число в допустимый диапазон
+        if (number >= -214747483647LL && number <= 214747483647LL) {
+            return true;
+        } else {
+            // Если число выходит за границы, добавляем ошибку
+            errors.append(Error(ErrorType::NUMBER_OUT_OF_RANGE, 0, token));
+            return false;
+        }
+    } else {
+        // Проверяем, соответствует ли токен формату переменной (буква в начале, далее буквы и цифры)
+        if (token.length() <= 20 && token[0].isLetter() && token.mid(1).contains(QRegExp("^[A-Za-z0-9_]*$"))) {
+            return true;
+        } else {
+            // Если токен не соответствует формату, добавляем ошибку
+            errors.append(Error(ErrorType::INVALID_TOKEN, 0, token));
+            return false;
+        }
+    }
+}
+
 
 // Функция для преобразования неравенства к операции "меньше"
 void convertToLess(TreeNode*& root, QList<Error>& errors) {
