@@ -269,3 +269,111 @@ void Tests::testTreeToString_data()
     QTest::newRow("nested_parentheses_tree") << node9 << "(2 + 5) * 3 - 11 > 9";
 }
 
+// Тесты для функции ConvertToLess
+void Tests::testConvertToLess()
+{
+    QFETCH(TreeNode*, root);
+    QFETCH(TreeNode*, expected);
+
+    QList<Error> errors;
+    convertToLess(root, errors);
+
+    // Сравниваем полученное дерево с ожидаемым
+    QVERIFY(compareNodes(root, expected));
+}
+
+void Tests::testConvertToLess_data()
+{
+    QTest::addColumn<TreeNode*>("root");
+    QTest::addColumn<TreeNode*>("expected");
+
+    // Test 1: Преобразование оператора >
+    TreeNode* node1 = new TreeNode("31", TreeNodeType::VALUE);
+    TreeNode* node2 = new TreeNode("15", TreeNodeType::VALUE);
+    TreeNode* node3 = new TreeNode(">", TreeNodeType::OPER_GREATER_THAN, node1, node2);
+    TreeNode* expected1 = new TreeNode("<", TreeNodeType::OPER_LESS_THAN, node2, node1);
+    QTest::newRow("greater_than") << node3 << expected1;
+
+    // Test 2: Преобразование оператора >=
+    node1 = new TreeNode("15", TreeNodeType::VALUE);
+    node2 = new TreeNode("10", TreeNodeType::VALUE);
+    node3 = new TreeNode(">=", TreeNodeType::OPER_GREATER_OR_EQUAL, node1, node2);
+    TreeNode* negateNode2 = new TreeNode("!", TreeNodeType::OPER_NEGATION, nullptr, node3);
+    TreeNode* expected2 = new TreeNode("<", TreeNodeType::OPER_LESS_THAN, node2, node1);
+    QTest::newRow("greater_or_equal") << node3 << negateNode2;
+
+    // Test 3: Преобразование оператора <=
+    node1 = new TreeNode("10", TreeNodeType::VALUE);
+    node2 = new TreeNode("16", TreeNodeType::VALUE);
+    node3 = new TreeNode("<=", TreeNodeType::OPER_LESS_OR_EQUAL, node1, node2);
+    TreeNode* negateNode3 = new TreeNode("!", TreeNodeType::OPER_NEGATION, nullptr, node3);
+    TreeNode* expected3 = new TreeNode("<", TreeNodeType::OPER_LESS_THAN, node1, node2);
+    QTest::newRow("less_or_equal") << node3 << negateNode3;
+
+    // Test 4: Отсутствие операторов сравнения
+    TreeNode* node4 = new TreeNode("+", TreeNodeType::OPER_PLUS);
+    QTest::newRow("no_comparison_operator") << node4 << node4;
+
+    // Test 5: Пустой узел
+    QTest::newRow("empty_node") << static_cast<TreeNode*>(nullptr) << static_cast<TreeNode*>(nullptr);
+
+    // Test 6: Узел без детей
+    TreeNode* node6 = new TreeNode("<", TreeNodeType::OPER_LESS_THAN);
+    QTest::newRow("node_without_children") << node6 << node6;
+
+    // Test 7: Преобразование сложного дерева с ">"
+    node1 = new TreeNode("15", TreeNodeType::VALUE);
+    node2 = new TreeNode("1", TreeNodeType::VALUE);
+    TreeNode* node7_left = new TreeNode("*", TreeNodeType::OPER_MULTIPLICATION, new TreeNode("3", TreeNodeType::VALUE), new TreeNode("10", TreeNodeType::VALUE));
+    TreeNode* node7 = new TreeNode(">", TreeNodeType::OPER_GREATER_THAN, node7_left, node1);
+    TreeNode* expected7_left = new TreeNode("*", TreeNodeType::OPER_MULTIPLICATION, new TreeNode("3", TreeNodeType::VALUE), new TreeNode("10", TreeNodeType::VALUE));
+    TreeNode* expected7 = new TreeNode("<", TreeNodeType::OPER_LESS_THAN, node1, expected7_left);
+    QTest::newRow("complex_greater_than") << node7 << expected7;
+
+    // Test 8: Преобразование сложного дерева с ">="
+    node1 = new TreeNode("15", TreeNodeType::VALUE);
+    node2 = new TreeNode("1", TreeNodeType::VALUE);
+    TreeNode* node8_left = new TreeNode("*", TreeNodeType::OPER_MULTIPLICATION, new TreeNode("3", TreeNodeType::VALUE), new TreeNode("10", TreeNodeType::VALUE));
+    TreeNode* node8 = new TreeNode(">=", TreeNodeType::OPER_GREATER_OR_EQUAL, node8_left, node1);
+    TreeNode* negateNode8 = new TreeNode("!", TreeNodeType::OPER_NEGATION, nullptr, node8);
+    TreeNode* expected8_left = new TreeNode("*", TreeNodeType::OPER_MULTIPLICATION, new TreeNode("3", TreeNodeType::VALUE), new TreeNode("10", TreeNodeType::VALUE));
+    TreeNode* expected8 = new TreeNode("<", TreeNodeType::OPER_LESS_THAN, node1, expected8_left);
+    QTest::newRow("complex_greater_or_equal") << node8 << negateNode8;
+
+    // Test 9: Преобразование сложного дерева с "<="
+    node1 = new TreeNode("51", TreeNodeType::VALUE);
+    node2 = new TreeNode("1", TreeNodeType::VALUE);
+    TreeNode* node9_left = new TreeNode("*", TreeNodeType::OPER_MULTIPLICATION, new TreeNode("3", TreeNodeType::VALUE), new TreeNode("10", TreeNodeType::VALUE));
+    TreeNode* node9 = new TreeNode("<=", TreeNodeType::OPER_LESS_OR_EQUAL, node9_left, node1);
+    TreeNode* negateNode9 = new TreeNode("!", TreeNodeType::OPER_NEGATION, nullptr, node9);
+    TreeNode* expected9_left = new TreeNode("*", TreeNodeType::OPER_MULTIPLICATION, new TreeNode("3", TreeNodeType::VALUE), new TreeNode("10", TreeNodeType::VALUE));
+    TreeNode* expected9 = new TreeNode("<", TreeNodeType::OPER_LESS_THAN, node1, expected9_left);
+    QTest::newRow("complex_less_or_equal") << node9 << negateNode9;
+
+    // Test 10: Отсутствие оператора сравнения в глубоком дереве
+    node1 = new TreeNode("*", TreeNodeType::OPER_MULTIPLICATION, new TreeNode("10", TreeNodeType::VALUE), new TreeNode("3", TreeNodeType::VALUE));
+    node2 = new TreeNode("+", TreeNodeType::OPER_PLUS, new TreeNode("1", TreeNodeType::VALUE), node1);
+    QTest::newRow("no_comparison_operator_deep") << node2 << node2;
+
+    // Test 11: Несколько операций сравнения
+    node1 = new TreeNode(">=", TreeNodeType::OPER_GREATER_OR_EQUAL, new TreeNode("10", TreeNodeType::VALUE), new TreeNode(">", TreeNodeType::OPER_GREATER_THAN, new TreeNode("3", TreeNodeType::VALUE), new TreeNode("*", TreeNodeType::OPER_MULTIPLICATION, new TreeNode("3", TreeNodeType::VALUE), new TreeNode("4", TreeNodeType::VALUE))));
+    TreeNode* negateNode11 = new TreeNode("!", TreeNodeType::OPER_NEGATION, nullptr, node1);
+    QTest::newRow("multiple_comparison_operators") << node1 << negateNode11;
+}
+
+// Функция для сравнения узлов TreeNode
+bool Tests::compareNodes(TreeNode* node1, TreeNode* node2) {
+    if (!node1 && !node2) {
+        return true; // Оба дерева пусты
+    } else if (!node1 || !node2) {
+        return false; // Одно из деревьев пустое, другое нет
+    } else if (node1->value != node2->value || node1->type != node2->type) {
+        return false; // Значения или типы узлов не совпадают
+    } else {
+        // Рекурсивно сравниваем левые и правые поддеревья
+        bool leftEqual = compareNodes(node1->left, node2->left);
+        bool rightEqual = compareNodes(node1->right, node2->right);
+        return leftEqual && rightEqual;
+    }
+}
+
