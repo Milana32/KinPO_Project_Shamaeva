@@ -81,6 +81,77 @@ bool isValidOperand(const QString& token, QList<Error>& errors) {
     }
 }
 
+// Функция для преобразования неравенства в дерево разбора выражегия
+TreeNode* buildLogicalTree(const QString& inequality, QList<Error>& errors) {
+    // Разделяем входную строку на токены, используя пробел в качестве разделителя.
+    QStringList tokens = inequality.split(' ', QString::SkipEmptyParts);
+    QList<TreeNode*> stack;
+    int operandCount = 0; // Счетчик операндов
+
+    // Если входная строка пустая, добавляем соответствующую ошибку и возвращаем nullptr.
+    if (tokens.isEmpty()) {
+        errors.append(Error(ErrorType::EMPTY_STRING, 0, ""));
+        return nullptr;
+    }
+
+    // Проходим по каждому токену.
+    for (int i = 0; i < tokens.size(); ++i) {
+        const QString& token = tokens[i];
+
+        // Если токен является допустимым операндом, добавляем его в стек.
+        if (isValidOperand(token, errors)) {
+            stack.append(new TreeNode(token, TreeNodeType::VALUE));
+            ++operandCount;
+        }
+        // Если токен является оператором, обрабатываем его.
+        else if (isOperator(token, errors)) {
+            TreeNodeType operatorType = TreeNode::getOperatorType(token);
+            TreeNode* node = new TreeNode(token, operatorType);
+
+            // Обработка унарных операторов.
+            if (token == "!" || token == "_-" || token == "_+") {
+                // Проверка на наличие операндов для унарного оператора.
+                if (stack.isEmpty()) {
+                    errors.append(Error(ErrorType::NOT_ENOUGH_ARGUMENTS_FOR_UNARY_OPERATOR, i, ""));
+                    return nullptr;
+                }
+                // Дополнительная проверка для корректного использования отрицания
+                if (token == "!" && stack.size() < 2) {
+                    errors.append(Error(ErrorType::INCORRECT_USE_OF_NEGATION, i, ""));
+                    return nullptr;
+                }
+                node->right = stack.takeLast();
+            }
+            // Обработка бинарных операторов.
+            else {
+                // Проверка на наличие двух операндов для бинарного оператора.
+                if (stack.size() < 2) {
+                    errors.append(Error(ErrorType::NOT_ENOUGH_ARGUMENTS, i, ""));
+                    return nullptr;
+                }
+                node->right = stack.takeLast();
+                node->left = stack.takeLast();
+            }
+            stack.append(node);
+        }
+        // Если токен не является ни операндом, ни оператором, добавляем ошибку и возвращаем nullptr.
+        else {
+            errors.append(Error(ErrorType::UNKNOWN_CHARACTER, i, ""));
+            return nullptr;
+        }
+    }
+
+    // Проверка на корректность построенного дерева.
+    if (operandCount == 1 || stack.size() != 1) {
+        // Если количество операндов не равно 1 или в стеке больше одного узла, значит, есть ошибка.
+        errors.append(Error(ErrorType::NOT_ENOUGH_OPERATORS, tokens.size(), ""));
+        return nullptr;
+    }
+
+    // Возвращаем построенное дерево.
+    return stack.takeFirst();
+}
+
 
 // Функция для преобразования неравенства к операции "меньше"
 void convertToLess(TreeNode*& root, QList<Error>& errors) {
