@@ -186,4 +186,86 @@ bool Tests::compareTrees(TreeNode* tree1, TreeNode* tree2)
     return compareTrees(tree1->left, tree2->left) && compareTrees(tree1->right, tree2->right);
 }
 
+void Tests::testTreeToString()
+{
+    QFETCH(TreeNode*, root);
+    QFETCH(QString, expected);
+
+    QList<Error> errors;
+    QString result = treeToString(root, errors);
+    QCOMPARE(result, expected);
+}
+
+void Tests::testTreeToString_data()
+{
+    QTest::addColumn<TreeNode*>("root");
+    QTest::addColumn<QString>("expected");
+
+    // Test 1: Проверка пустого узла
+    QTest::newRow("empty_node") << static_cast<TreeNode*>(nullptr) << "EMPTY_NODE";
+
+    // Test 2: Проверка узла без потомков
+    TreeNode* node2 = new TreeNode("<", TreeNodeType::OPER_LESS_THAN);
+    QTest::newRow("node_without_children") << node2 << "<";
+
+    // Test 3: Проверка простого бинарного дерева
+    TreeNode* node3 = new TreeNode("<", TreeNodeType::OPER_LESS_THAN);
+    node3->left = new TreeNode("3", TreeNodeType::VALUE);
+    node3->right = new TreeNode("4", TreeNodeType::VALUE);
+    QTest::newRow("simple_binary_tree") << node3 << "3 < 4";
+
+    // Test 4: Проверка дерева с унарным оператором
+    TreeNode* unaryNode4 = new TreeNode("!", TreeNodeType::OPER_UNARY);
+    unaryNode4->right = new TreeNode("x", TreeNodeType::VALUE);
+    QTest::newRow("unary_operator_tree") << unaryNode4 << "! x";
+
+    // Test 5: Проверка сложного дерева
+    TreeNode* node5 = new TreeNode(">=", TreeNodeType::OPER_GREATER_OR_EQUAL);
+    node5->left = new TreeNode("*", TreeNodeType::OPER_MULTIPLICATION);
+    node5->left->left = new TreeNode("+", TreeNodeType::OPER_PLUS);
+    node5->left->left->left = new TreeNode("1", TreeNodeType::VALUE);
+    node5->left->left->right = new TreeNode("2", TreeNodeType::VALUE);
+    node5->left->right = new TreeNode("3", TreeNodeType::VALUE);
+    node5->right = new TreeNode("0", TreeNodeType::VALUE);
+    QTest::newRow("complex_tree") << node5 << "(1 + 2) * 3 >= 0";
+
+    // Test 6: Проверка дерева с унарным и бинарным операторами
+    TreeNode* unaryNode6 = new TreeNode("!", TreeNodeType::OPER_UNARY);
+    unaryNode6->right = new TreeNode("<", TreeNodeType::OPER_LESS_THAN);
+    unaryNode6->right->left = new TreeNode("x", TreeNodeType::VALUE);
+    unaryNode6->right->right = new TreeNode("y", TreeNodeType::VALUE);
+    QTest::newRow("unary_and_binary_operators_tree") << unaryNode6 << "! (x < y)";
+
+    // Test 7: Проверка дерева с вложенными операторами
+    TreeNode* node7 = new TreeNode(">", TreeNodeType::OPER_GREATER_THAN);
+    node7->left = new TreeNode("+", TreeNodeType::OPER_PLUS);
+    node7->left->left = new TreeNode("*", TreeNodeType::OPER_MULTIPLICATION);
+    node7->left->left->left = new TreeNode("2", TreeNodeType::VALUE);
+    node7->left->left->right = new TreeNode("3", TreeNodeType::VALUE);
+    node7->left->right = new TreeNode("1", TreeNodeType::VALUE);
+    node7->right = new TreeNode("0", TreeNodeType::VALUE);
+    QTest::newRow("nested_operators_tree") << node7 << "2 * 3 + 1 > 0";
+
+    // Test 8: Проверка дерева с несколькими уровнями вложенности
+    TreeNode* node8 = new TreeNode("<", TreeNodeType::OPER_LESS_THAN);
+    node8->left = new TreeNode("+", TreeNodeType::OPER_PLUS);
+    node8->left->left = new TreeNode("1", TreeNodeType::VALUE);
+    node8->left->right = new TreeNode("2", TreeNodeType::VALUE);
+    node8->right = new TreeNode("*", TreeNodeType::OPER_MULTIPLICATION);
+    node8->right->left = new TreeNode("3", TreeNodeType::VALUE);
+    node8->right->right = new TreeNode("4", TreeNodeType::VALUE);
+    QTest::newRow("multiple_levels_tree") << node8 << "1 + 2 < 3 * 4";
+
+    // Test 9: Проверка дерева с вложенными скобками
+    TreeNode* node9 = new TreeNode(">", TreeNodeType::OPER_GREATER_THAN);
+    node9->left = new TreeNode("-", TreeNodeType::OPER_MINUS);
+    node9->left->left = new TreeNode("*", TreeNodeType::OPER_MULTIPLICATION);
+    node9->left->left->left = new TreeNode("+", TreeNodeType::OPER_PLUS);
+    node9->left->left->left->left = new TreeNode("2", TreeNodeType::VALUE);
+    node9->left->left->left->right = new TreeNode("5", TreeNodeType::VALUE);
+    node9->left->left->right = new TreeNode("3", TreeNodeType::VALUE);
+    node9->left->right = new TreeNode("11", TreeNodeType::VALUE);
+    node9->right = new TreeNode("9", TreeNodeType::VALUE);
+    QTest::newRow("nested_parentheses_tree") << node9 << "(2 + 5) * 3 - 11 > 9";
+}
 
