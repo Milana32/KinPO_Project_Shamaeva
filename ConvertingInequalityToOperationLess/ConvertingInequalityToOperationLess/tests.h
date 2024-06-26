@@ -43,8 +43,7 @@ private slots:
 
 
 private:
-    bool compareTrees(TreeNode* tree1, TreeNode* tree2);
-    bool compareNodes(TreeNode* node1, TreeNode* node2);
+
 };
 
 #endif // TESTS_H

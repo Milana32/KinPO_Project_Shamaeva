@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 12.0.2, 2024-06-26T13:08:51. -->
+<!-- Written by QtCreator 12.0.2, 2024-06-26T13:10:43. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -75,7 +75,6 @@
     <value type="Qt::CheckState" key="1@C:/Users/shama/Desktop/KinPO/KinPO_Project_Shamaeva/ConvertingInequalityToOperationLess/ConvertingInequalityToOperationLess/tests.cpp:testbuildLogicalTree_data">Unchecked</value>
     <value type="Qt::CheckState" key="1@C:/Users/shama/Desktop/KinPO/KinPO_Project_Shamaeva/ConvertingInequalityToOperationLess/ConvertingInequalityToOperationLess/tests.cpp:testisOperator_data">Unchecked</value>
     <value type="Qt::CheckState" key="1@C:/Users/shama/Desktop/KinPO/KinPO_Project_Shamaeva/ConvertingInequalityToOperationLess/ConvertingInequalityToOperationLess/tests.cpp:testisValidOperand_data">Unchecked</value>
-    <value type="Qt::CheckState" key="1@C:/Users/shama/Desktop/KinPO/KinPO_Project_Shamaeva/ConvertingInequalityToOperationLess/ConvertingInequalityToOperationLess/tests.h:testConvertToLess_data">Unchecked</value>
    </valuemap>
    <value type="int" key="AutoTest.RunAfterBuild">0</value>
    <value type="bool" key="AutoTest.UseGlobal">true</value>
