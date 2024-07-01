@@ -43,35 +43,56 @@
  * \param [in] argv[2] Путь к выходному файлу (.txt) для сохранения результата.
  * \return 0, если программа завершилась успешно, -1 в случае ошибки.
  */
+
 int main(int argc, char *argv[])
 {
-    //runTests();
+    runTests();
     QCoreApplication a(argc, argv);
 
     // Включить поддержку русских символов в консоли
     setlocale(LC_ALL, "Russian");
 
+    // QList<Error> errors;
+    // QString filePath;
+    // QString outputPath;
+
+    // // Вывод запроса на ввод пути к файлу
+    // std::cout << "Input path to file (.txt): ";
+    // std::flush(std::cout); // Сбрасываем буфер вывода, чтобы сообщение появилось сразу
+
+    // // Считываем ввод с консоли
+    // std::string tempPath;
+    // std::getline(std::cin, tempPath);
+
+    // // Преобразуем std::string в QString
+    // filePath = QString::fromStdString(tempPath);
+
+    // // Удаляем символы перевода строки или другие пробельные символы в конце строки, если они есть
+    // filePath = filePath.trimmed();
+
+    // // Проверяем существование файла
+    // QFile file(filePath);
+    // if (!file.exists())
+    // {
+    //     errors.append(Error(ErrorType::FILE_NOT_FOUND, 0, filePath));
+    //     qDebug() << "FILE_NOT_FOUND: Файл по пути не найден";
+    //     return -1;
+    // }
+
+    // if (argc != 3)
+    // {
+    //     qDebug() << "Неверное количество аргументов. Использование: ./convertingInequalityToLess.exe <input_file> <output_file>";
+    //     return -1;
+    // }
+
     QList<Error> errors;
-    QString filePath;
-    QString outputPath;
-
-    // Вывод запроса на ввод пути к файлу
-    std::cout << "Input path to file (.txt): ";
-    std::flush(std::cout); // Сбрасываем буфер вывода, чтобы сообщение появилось сразу
-
-    // Считываем ввод с консоли
-    std::string tempPath;
-    std::getline(std::cin, tempPath);
-
-    // Преобразуем std::string в QString
-    filePath = QString::fromStdString(tempPath);
-
-    // Удаляем символы перевода строки или другие пробельные символы в конце строки, если они есть
-    filePath = filePath.trimmed();
+    QString filePath = argv[1];
+    QString outputPath = argv[2];
 
     // Проверяем существование файла
     QFile file(filePath);
-    if (!file.exists()) {
+    if (!file.exists())
+    {
         errors.append(Error(ErrorType::FILE_NOT_FOUND, 0, filePath));
         qDebug() << "FILE_NOT_FOUND: Файл по пути не найден";
         return -1;
@@ -80,8 +101,10 @@ int main(int argc, char *argv[])
     // Получение строк из файла
     QStringList fileContent = getStringsFromFile(filePath, errors);
 
-    if (fileContent.isEmpty()) {
-        for (const Error& error : errors) {
+    if (fileContent.isEmpty())
+    {
+        for (const Error& error : errors)
+        {
             qDebug() << ErrorToString(error);
         }
         return -1;
@@ -92,8 +115,10 @@ int main(int argc, char *argv[])
     // Построение дерева логического выражения
     TreeNode* logicalTree = buildLogicalTree(inequality, errors);
 
-    if (!logicalTree) {
-        for (const Error& error : errors) {
+    if (!logicalTree)
+    {
+        for (const Error& error : errors)
+        {
             qDebug() << ErrorToString(error);
         }
         return -1;
@@ -107,8 +132,10 @@ int main(int argc, char *argv[])
     // Преобразование дерева в строку
     QString result = treeToString(logicalTree, errors);
 
-    if (result.isEmpty()) {
-        for (const Error& error : errors) {
+    if (result.isEmpty())
+    {
+        for (const Error& error : errors)
+        {
             qDebug() << ErrorToString(error);
         }
         return -1;
@@ -133,7 +160,8 @@ int main(int argc, char *argv[])
 
     // Записываем результат в выходной файл
     QFile outputFile(outputPath);
-    if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
         errors.append(Error(ErrorType::FILE_NOT_OPENED, 0, outputPath));
         qDebug() << "FILE_NOT_OPENED: Не удалось открыть файл для записи";
         return -1;

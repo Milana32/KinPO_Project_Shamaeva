@@ -163,16 +163,16 @@ void Tests::testbuildLogicalTree_data()
 
     // Тесты
     QTest::newRow("Empty string") << "" << "EMPTY_STRING" << emptyTree;
-    QTest::newRow("Single operator token") << "!" << "INVALID_TOKEN\nNOT_ENOUGH_ARGUMENTS_FOR_UNARY_OPERATOR" << singleOperatorTree;
+    QTest::newRow("Single operator token") << "!" << "INVALID_TOKEN 0 !\nNOT_ENOUGH_ARGUMENTS_FOR_UNARY_OPERATOR" << singleOperatorTree;
     QTest::newRow("Single operand token") << "4" << "NOT_ENOUGH_OPERATORS" << singleOperandTree;
     QTest::newRow("Basic test") << "7 5 >" << "" << basicTree;
     QTest::newRow("Only variables") << "A B C" << "NOT_ENOUGH_OPERATORS" << varTree;
-    QTest::newRow("Only operators") << "+ !" << "INVALID_TOKEN\nNOT_ENOUGH_ARGUMENTS" << opTree;
-    QTest::newRow("Error at start") << "* A B + >" << "INVALID_TOKEN\nNOT_ENOUGH_ARGUMENTS" << errorStartTree;
-    QTest::newRow("Error at end") << "A B + > *" << "INVALID_TOKEN\nINVALID_TOKEN\nNOT_ENOUGH_ARGUMENTS" << errorEndTree;
-    QTest::newRow("Negation of variable") << "5 !" << "INVALID_TOKEN\nINCORRECT_USE_OF_NEGATION" << negTree;
+    QTest::newRow("Only operators") << "+ !" << "INVALID_TOKEN 0 +\nNOT_ENOUGH_ARGUMENTS" << opTree;
+    QTest::newRow("Error at start") << "* A B + >" << "INVALID_TOKEN 0 *\nNOT_ENOUGH_ARGUMENTS" << errorStartTree;
+    QTest::newRow("Error at end") << "A B + > *" << "INVALID_TOKEN 2 +\nINVALID_TOKEN 3 >\nNOT_ENOUGH_ARGUMENTS" << errorEndTree;
+    QTest::newRow("Negation of variable") << "5 !" << "INVALID_TOKEN 1 !\nINCORRECT_USE_OF_NEGATION" << negTree;
     QTest::newRow("Complex expression") << "3 10 * 1 + 51 <=" << "" << complexTree;
-    QTest::newRow("Insufficient operators") << "A B C <" << "INVALID_TOKEN\nNOT_ENOUGH_OPERATORS" << insufficientOpTree;
+    QTest::newRow("Insufficient operators") << "A B C <" << "INVALID_TOKEN 3 <\nNOT_ENOUGH_OPERATORS" << insufficientOpTree;
 }
 
 bool Tests::compareTrees(TreeNode* tree1, TreeNode* tree2)
