@@ -45,7 +45,7 @@
  */
 int main(int argc, char *argv[])
 {
-    runTests();
+    //runTests();
     QCoreApplication a(argc, argv);
 
     // Включить поддержку русских символов в консоли
@@ -72,6 +72,7 @@ int main(int argc, char *argv[])
     // Проверяем существование файла
     QFile file(filePath);
     if (!file.exists()) {
+        errors.append(Error(ErrorType::FILE_NOT_FOUND, 0, filePath));
         qDebug() << "FILE_NOT_FOUND: Файл по пути не найден";
         return -1;
     }
@@ -133,6 +134,7 @@ int main(int argc, char *argv[])
     // Записываем результат в выходной файл
     QFile outputFile(outputPath);
     if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        errors.append(Error(ErrorType::FILE_NOT_OPENED, 0, outputPath));
         qDebug() << "FILE_NOT_OPENED: Не удалось открыть файл для записи";
         return -1;
     }
@@ -142,14 +144,6 @@ int main(int argc, char *argv[])
     outputFile.close();
 
     qDebug() << "Результат успешно записан в файл:" << outputPath;
-
-    // // Вывод всех найденных ошибок
-    // if (!errors.isEmpty()) {
-    //     qDebug() << "Список найденных ошибок:";
-    //     for (const Error& error : errors) {
-    //         qDebug() << ErrorToString(error);
-    //     }
-    // }
 
     return 0;
 }

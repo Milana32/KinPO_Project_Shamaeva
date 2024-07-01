@@ -14,7 +14,7 @@
 QString ErrorToString(const Error& error) {
     switch (error.type) {
     case ErrorType::PATH_NOT_FOUND:
-        return "PATH_NOT_FOUND";
+      return "PATH_NOT_FOUND " + QString::number(error.position) + " " + error.symbol;
     case ErrorType::FILE_NOT_FOUND:
         return "FILE_NOT_FOUND";
     case ErrorType::FILE_NOT_OPENED:
@@ -48,7 +48,7 @@ QString ErrorToString(const Error& error) {
     case ErrorType::NUMBER_OUT_OF_RANGE:
         return "NUMBER_OUT_OF_RANGE";
     case ErrorType::INVALID_TOKEN:
-        return "INVALID_TOKEN";
+        return "INVALID_TOKEN " + QString::number(error.position) + " " + error.symbol;
     default:
         return "UNKNOWN_ERROR";
     }

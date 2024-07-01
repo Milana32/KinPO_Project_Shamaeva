@@ -50,10 +50,10 @@ bool isOperator(const QString& token, QList<Error>& errors) {
 
 
 // Функция для проверки, является ли токен операндом
-bool isValidOperand(const QString& token, QList<Error>& errors) {
+bool isValidOperand(const QString& token, int token_count, QList<Error>& errors) {
     // Проверяем, является ли токен пустым
     if (token.isEmpty()) {
-        errors.append(Error(ErrorType::EMPTY_NODE, 0, token));
+        errors.append(Error(ErrorType::EMPTY_NODE, token_count, token));
         return false;
     }
 
@@ -63,11 +63,12 @@ bool isValidOperand(const QString& token, QList<Error>& errors) {
 
     if (isNumber) {
         // Проверяем, входит ли число в допустимый диапазон
-        if (number >= -214747483647LL && number <= 214747483647LL) {
+        if (number >= -214747483647LL && number <= 214747483647LL)
+        {
             return true;
         } else {
             // Если число выходит за границы, добавляем ошибку
-            errors.append(Error(ErrorType::NUMBER_OUT_OF_RANGE, 0, token));
+            errors.append(Error(ErrorType::NUMBER_OUT_OF_RANGE, token_count, token));
             return false;
         }
     } else {
@@ -76,7 +77,7 @@ bool isValidOperand(const QString& token, QList<Error>& errors) {
             return true;
         } else {
             // Если токен не соответствует формату, добавляем ошибку
-            errors.append(Error(ErrorType::INVALID_TOKEN, 0, token));
+            errors.append(Error(ErrorType::INVALID_TOKEN, token_count, token));
             return false;
         }
     }
@@ -88,19 +89,19 @@ TreeNode* buildLogicalTree(const QString& inequality, QList<Error>& errors) {
     QStringList tokens = inequality.split(' ', QString::SkipEmptyParts);
     QList<TreeNode*> stack;
     int operandCount = 0; // Счетчик операндов
+    bool comparisonOperatorFound = false;
 
     // Если входная строка пустая, добавляем соответствующую ошибку и возвращаем nullptr.
     if (tokens.isEmpty()) {
         errors.append(Error(ErrorType::EMPTY_STRING, 0, ""));
         return nullptr;
     }
-
     // Проходим по каждому токену.
     for (int i = 0; i < tokens.size(); ++i) {
         const QString& token = tokens[i];
 
         // Если токен является допустимым операндом, добавляем его в стек.
-        if (isValidOperand(token, errors)) {
+        if (isValidOperand(token, i, errors)) {
             stack.append(new TreeNode(token, TreeNodeType::VALUE));
             ++operandCount;
         }
@@ -108,6 +109,17 @@ TreeNode* buildLogicalTree(const QString& inequality, QList<Error>& errors) {
         else if (isOperator(token, errors)) {
             TreeNodeType operatorType = TreeNode::getOperatorType(token);
             TreeNode* node = new TreeNode(token, operatorType);
+
+            // Проверка на наличие более одного оператора сравнения
+            if (operatorType == TreeNodeType::OPER_GREATER_THAN || operatorType == TreeNodeType::OPER_GREATER_OR_EQUAL || operatorType == TreeNodeType::OPER_LESS_THAN || operatorType == TreeNodeType::OPER_LESS_OR_EQUAL)
+            {
+                if (comparisonOperatorFound) {
+                    errors.append(Error(ErrorType::MORE_THAN_ONE_COMPARISON_OPERATOR, i, token));
+                    return nullptr;
+                } else {
+                    comparisonOperatorFound = true;
+                }
+            }
 
             // Обработка унарных операторов.
             if (token == "!" || token == "_-" || token == "_+") {
@@ -170,9 +182,11 @@ int getPriority(const QString& node) {
     }
 }
 
+
+
 // Функция для преобразования дерева логического выражения в строку в инфиксной записи
 QString treeToString(TreeNode* root, QList<Error>& errors) {
-    if (root==nullptr) {
+    if (root == nullptr) {
         errors.append(Error(ErrorType::EMPTY_NODE, 0, ""));
         return "EMPTY_NODE";
     }
@@ -185,15 +199,15 @@ QString treeToString(TreeNode* root, QList<Error>& errors) {
         int rootPriority = getPriority(root->value);
         int leftPriority = getPriority(root->left->value);
 
-        // Добавляем скобки вокруг левого поддерева, если приоритет оператора левее выше
-        if (leftPriority != 0 && leftPriority < rootPriority) {
+        // Добавляем скобки вокруг левого поддерева, если приоритет оператора левее выше или если левый потомок - унарный оператор
+        if (leftPriority != 0 && (leftPriority < rootPriority || (root->left->value == "!" || root->left->value ==  "_-" || root->left->value == "_+"))) {
             result += "(" + leftStr + ")";
         } else {
             result += leftStr;
         }
     }
 
-    // Добавляем значение текущий узел к результату
+    // Добавляем значение текущего узла к результату
     result += " " + root->value + " ";
 
     // Обрабатываем правое поддерево
@@ -202,8 +216,8 @@ QString treeToString(TreeNode* root, QList<Error>& errors) {
         int rootPriority = getPriority(root->value);
         int rightPriority = getPriority(root->right->value);
 
-        // Добавляем скобки вокруг правого поддерева, если приоритет оператора правее выше
-        if (rightPriority != 0 && rightPriority < rootPriority) {
+        // Добавляем скобки вокруг правого поддерева, если приоритет оператора правее выше или если правый потомок - унарный оператор
+        if (rightPriority != 0 && (rightPriority < rootPriority || (root->left->value == "!" || root->left->value ==  "_-" || root->left->value == "_+"))) {
             result += "(" + rightStr + ")";
         } else {
             result += rightStr;
@@ -212,6 +226,56 @@ QString treeToString(TreeNode* root, QList<Error>& errors) {
 
     return result.trimmed(); // Возвращаем результирующую строку без лишних пробелов в конце
 }
+
+// // Функция проверки унарного оператора (пример, определите свою логику проверки)
+// bool isUnaryOperator(const QString& value) {
+//     //
+//     return value == "!" || value == "_-" || value == "_+";
+// }
+
+
+// // Функция для преобразования дерева логического выражения в строку в инфиксной записи
+// QString treeToString(TreeNode* root, QList<Error>& errors) {
+//     if (root==nullptr) {
+//         errors.append(Error(ErrorType::EMPTY_NODE, 0, ""));
+//         return "EMPTY_NODE";
+//     }
+
+//     QString result;
+
+//     // Обрабатываем левое поддерево
+//     if (root->left) {
+//         QString leftStr = treeToString(root->left, errors);
+//         int rootPriority = getPriority(root->value);
+//         int leftPriority = getPriority(root->left->value);
+
+//         // Добавляем скобки вокруг левого поддерева, если приоритет оператора левее выше
+//         if (leftPriority != 0 && leftPriority < rootPriority) {
+//             result += "(" + leftStr + ")";
+//         } else {
+//             result += leftStr;
+//         }
+//     }
+
+//     // Добавляем значение текущий узел к результату
+//     result += " " + root->value + " ";
+
+//     // Обрабатываем правое поддерево
+//     if (root->right) {
+//         QString rightStr = treeToString(root->right, errors);
+//         int rootPriority = getPriority(root->value);
+//         int rightPriority = getPriority(root->right->value);
+
+//         // Добавляем скобки вокруг правого поддерева, если приоритет оператора правее выше
+//         if (rightPriority != 0 && rightPriority < rootPriority) {
+//             result += "(" + rightStr + ")";
+//         } else {
+//             result += rightStr;
+//         }
+//     }
+
+//     return result.trimmed(); // Возвращаем результирующую строку без лишних пробелов в конце
+// }
 
 
 

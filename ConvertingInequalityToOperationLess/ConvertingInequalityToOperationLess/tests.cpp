@@ -60,7 +60,7 @@ void Tests::testisValidOperand()
     QFETCH(bool, expected);
 
     QList<Error> errors;
-    bool result = isValidOperand(token, errors);
+    bool result = isValidOperand(token, 0, errors);
     QCOMPARE(result, expected);
 }
 
@@ -304,7 +304,7 @@ void Tests::testConvertToLess_data()
     // Test 3: Преобразование оператора <=
     node1 = new TreeNode("10", TreeNodeType::VALUE);
     node2 = new TreeNode("16", TreeNodeType::VALUE);
-    node3 = new TreeNode("<=", TreeNodeType::OPER_LESS_OR_EQUAL, node1, node2);
+    node3 = new TreeNode("<=", TreeNodeType::OPER_LESS_OR_EQUAL,node2 , node1);
     TreeNode* negateNode3 = new TreeNode("!", TreeNodeType::OPER_NEGATION, nullptr, node3);
     QTest::newRow("less_or_equal") << node3 << negateNode3;
 
@@ -323,8 +323,8 @@ void Tests::testConvertToLess_data()
     node1 = new TreeNode("15", TreeNodeType::VALUE);
     node2 = new TreeNode("1", TreeNodeType::VALUE);
     TreeNode* node7_left = new TreeNode("*", TreeNodeType::OPER_MULTIPLICATION, new TreeNode("3", TreeNodeType::VALUE), new TreeNode("10", TreeNodeType::VALUE));
-    TreeNode* node7 = new TreeNode(">", TreeNodeType::OPER_GREATER_THAN, node7_left, node1);
-    TreeNode* expected7_left = new TreeNode("*", TreeNodeType::OPER_MULTIPLICATION, new TreeNode("3", TreeNodeType::VALUE), new TreeNode("10", TreeNodeType::VALUE));
+    TreeNode* expected7_left = new TreeNode("+", TreeNodeType::OPER_PLUS, node7_left , node2);
+    TreeNode* node7 = new TreeNode(">", TreeNodeType::OPER_GREATER_THAN, expected7_left, node1);
     TreeNode* expected7 = new TreeNode("<", TreeNodeType::OPER_LESS_THAN, node1, expected7_left);
     QTest::newRow("complex_greater_than") << node7 << expected7;
 

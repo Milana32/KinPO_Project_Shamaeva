@@ -41,7 +41,7 @@ bool isOperator(const QString& token, QList<Error>& errors);
  * \param [in,out] errors Список ошибок.
  * \return true, если токен является операндом, иначе false.
  */
-bool isValidOperand(const QString& token, QList<Error>& errors);
+bool isValidOperand(const QString& token, int token_count, QList<Error>& errors);
 
 /*!
  * \brief Функция для определения приоритета оператора.
@@ -64,5 +64,8 @@ QString treeToString(TreeNode* root, QList<Error>& errors);
  * \param [in,out] errors Список ошибок.
  */
 void convertToLess(TreeNode*& root, QList<Error>& errors);
+
+
+bool isUnaryOperator(const QString& value);
 
 #endif // FUNCTIONS_H
