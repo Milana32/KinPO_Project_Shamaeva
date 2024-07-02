@@ -166,7 +166,6 @@ TreeNode* buildLogicalTree(const QString& inequality, QList<Error>& errors) {
 }
 
 
-
 // Функция для определения приоритета оператора
 int getPriority(const QString& node) {
     if (node == "!" || node == "_+" || node == "_-") {
@@ -181,7 +180,6 @@ int getPriority(const QString& node) {
         return 0; // Неизвестный оператор имеет приоритет 0
     }
 }
-
 
 
 // Функция для преобразования дерева логического выражения в строку в инфиксной записи

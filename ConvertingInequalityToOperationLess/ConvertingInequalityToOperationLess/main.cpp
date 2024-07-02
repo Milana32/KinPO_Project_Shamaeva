@@ -46,44 +46,22 @@
 
 int main(int argc, char *argv[])
 {
-    runTests();
-    QCoreApplication a(argc, argv);
+    //runTests();
+    //QCoreApplication a(argc, argv);
 
-    // Включить поддержку русских символов в консоли
-    setlocale(LC_ALL, "Russian");
+    // qDebug() << argc;
 
-    // QList<Error> errors;
-    // QString filePath;
-    // QString outputPath;
-
-    // // Вывод запроса на ввод пути к файлу
-    // std::cout << "Input path to file (.txt): ";
-    // std::flush(std::cout); // Сбрасываем буфер вывода, чтобы сообщение появилось сразу
-
-    // // Считываем ввод с консоли
-    // std::string tempPath;
-    // std::getline(std::cin, tempPath);
-
-    // // Преобразуем std::string в QString
-    // filePath = QString::fromStdString(tempPath);
-
-    // // Удаляем символы перевода строки или другие пробельные символы в конце строки, если они есть
-    // filePath = filePath.trimmed();
-
-    // // Проверяем существование файла
-    // QFile file(filePath);
-    // if (!file.exists())
+    // for (int i = 0; i < argc; i++)
     // {
-    //     errors.append(Error(ErrorType::FILE_NOT_FOUND, 0, filePath));
-    //     qDebug() << "FILE_NOT_FOUND: Файл по пути не найден";
-    //     return -1;
+    //     qDebug() << argv[i];
+
     // }
 
-    // if (argc != 3)
-    // {
-    //     qDebug() << "Неверное количество аргументов. Использование: ./convertingInequalityToLess.exe <input_file> <output_file>";
-    //     return -1;
-    // }
+    if (argc != 3)
+    {
+        qDebug() << "Incorrect number of arguments";
+        return -1;
+    }
 
     QList<Error> errors;
     QString filePath = argv[1];
@@ -94,7 +72,7 @@ int main(int argc, char *argv[])
     if (!file.exists())
     {
         errors.append(Error(ErrorType::FILE_NOT_FOUND, 0, filePath));
-        qDebug() << "FILE_NOT_FOUND: Файл по пути не найден";
+        qDebug() << "FILE_NOT_FOUND";
         return -1;
     }
 
@@ -141,37 +119,18 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    qDebug() << "Исходное неравенство в инфиксной форме:" << inequality_result;
-    qDebug() << "Полученное неравенство в инфиксной форме:" << result;
-
-    // Вывод запроса на ввод пути к выходному файлу
-    std::cout << "Input path to output file (.txt): ";
-    std::flush(std::cout); // Сбрасываем буфер вывода, чтобы сообщение появилось сразу
-
-    // Считываем ввод с консоли
-    std::string tempOutputPath;
-    std::getline(std::cin, tempOutputPath);
-
-    // Преобразуем std::string в QString
-    outputPath = QString::fromStdString(tempOutputPath);
-
-    // Удаляем символы перевода строки или другие пробельные символы в конце строки, если они есть
-    outputPath = outputPath.trimmed();
-
     // Записываем результат в выходной файл
     QFile outputFile(outputPath);
     if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         errors.append(Error(ErrorType::FILE_NOT_OPENED, 0, outputPath));
-        qDebug() << "FILE_NOT_OPENED: Не удалось открыть файл для записи";
+        qDebug() << "FILE_NOT_OPENED";
         return -1;
     }
 
     QTextStream out(&outputFile);
     out << result;
     outputFile.close();
-
-    qDebug() << "Результат успешно записан в файл:" << outputPath;
 
     return 0;
 }
