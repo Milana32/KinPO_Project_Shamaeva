@@ -1,7 +1,0 @@
- 
-test_6 
-Expected data: 
-"INVALID_TOKEN 1 &"
-"UNKNOWN_CHARACTER" 
- 
-Received data: 

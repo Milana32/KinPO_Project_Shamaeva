@@ -1,9 +1,0 @@
- 
-test_5 
-Expected data: 
-a <= dn 
-! (dn < a) 
- 
-Received data: 
-a <= dn
-! (dn < a)
