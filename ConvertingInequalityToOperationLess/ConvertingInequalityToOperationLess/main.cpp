@@ -49,14 +49,6 @@ int main(int argc, char *argv[])
     //runTests();
     //QCoreApplication a(argc, argv);
 
-    // qDebug() << argc;
-
-    // for (int i = 0; i < argc; i++)
-    // {
-    //     qDebug() << argv[i];
-
-    // }
-
     if (argc != 3)
     {
         qDebug() << "Incorrect number of arguments";
@@ -102,7 +94,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    QString inequality_result = treeToString(logicalTree, errors);
+    QString original_expression = treeToString(logicalTree, errors);
 
     // Преобразование операторов сравнения
     convertToLess(logicalTree, errors);
@@ -129,6 +121,8 @@ int main(int argc, char *argv[])
     }
 
     QTextStream out(&outputFile);
+    out << original_expression;
+    out << "\n";
     out << result;
     outputFile.close();
 

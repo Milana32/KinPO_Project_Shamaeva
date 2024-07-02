@@ -1,0 +1,11 @@
+ 
+test_7 
+Expected data: 
+"INVALID_TOKEN 1 _-"
+"INVALID_TOKEN 3 -"
+"INVALID_TOKEN 5 *"
+"INVALID_TOKEN 7 <"
+"INVALID_TOKEN 9 <="
+"MORE_THAN_ONE_COMPARISON_OPERATOR" 
+ 
+Received data: 

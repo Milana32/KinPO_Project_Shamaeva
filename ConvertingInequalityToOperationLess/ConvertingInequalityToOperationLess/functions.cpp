@@ -168,13 +168,17 @@ TreeNode* buildLogicalTree(const QString& inequality, QList<Error>& errors) {
 
 // Функция для определения приоритета оператора
 int getPriority(const QString& node) {
-    if (node == "!" || node == "_+" || node == "_-") {
+    if (node == "!" || node == "_+" || node == "_-")
+    {
         return 4; // Унарные операторы имеют приоритет 4
-    } else if (node == "<" || node == ">" || node == "<=" || node == ">=") {
+    } else if (node == "<" || node == ">" || node == "<=" || node == ">=")
+    {
         return 1; // Операторы сравнения имеют приоритет 1
-    } else if (node == "*" || node == "/" || node == "%") {
+    } else if (node == "*" || node == "/" || node == "%")
+    {
         return 3; // Операторы умножения, деления и остатка от деления имеют приоритет 3
-    } else if (node == "+" || node == "-") {
+    } else if (node == "+" || node == "-")
+    {
         return 2; // Операторы сложения и вычитания имеют приоритет 2
     } else {
         return 0; // Неизвестный оператор имеет приоритет 0
@@ -183,8 +187,10 @@ int getPriority(const QString& node) {
 
 
 // Функция для преобразования дерева логического выражения в строку в инфиксной записи
-QString treeToString(TreeNode* root, QList<Error>& errors) {
-    if (root == nullptr) {
+QString treeToString(TreeNode* root, QList<Error>& errors)
+{
+    if (root == nullptr)
+    {
         errors.append(Error(ErrorType::EMPTY_NODE, 0, ""));
         return "EMPTY_NODE";
     }
@@ -192,7 +198,8 @@ QString treeToString(TreeNode* root, QList<Error>& errors) {
     QString result;
 
     // Обрабатываем левое поддерево
-    if (root->left) {
+    if (root->left)
+    {
         QString leftStr = treeToString(root->left, errors);
         int rootPriority = getPriority(root->value);
         int leftPriority = getPriority(root->left->value);
@@ -209,15 +216,18 @@ QString treeToString(TreeNode* root, QList<Error>& errors) {
     result += " " + root->value + " ";
 
     // Обрабатываем правое поддерево
-    if (root->right) {
+    if (root->right)
+    {
         QString rightStr = treeToString(root->right, errors);
         int rootPriority = getPriority(root->value);
         int rightPriority = getPriority(root->right->value);
 
         // Добавляем скобки вокруг правого поддерева, если приоритет оператора правее выше или если правый потомок - унарный оператор
-        if (rightPriority != 0 && (rightPriority < rootPriority || (root->left->value == "!" || root->left->value ==  "_-" || root->left->value == "_+"))) {
+        if (rightPriority != 0 && (rightPriority < rootPriority || (root->right->value == "!" || root->right->value ==  "_-" || root->right->value == "_+")))
+        {
             result += "(" + rightStr + ")";
-        } else {
+        } else
+        {
             result += rightStr;
         }
     }

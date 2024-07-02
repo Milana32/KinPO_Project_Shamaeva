@@ -40,13 +40,13 @@ struct TreeNode {
     TreeNode* right;        /*!< Правый дочерний узел */
     TreeNodeType type;      /*!< Тип узла */
 
-    // /*!
-    //  * \brief Конструктор узла дерева.
-    //  * \param val Значение узла.
-    //  * \param t Тип узла.
-    //  * \param l Левый дочерний узел.
-    //  * \param r Правый дочерний узел.
-    //  */
+    /*!
+     * \brief Конструктор узла дерева.
+     * \param val Значение узла.
+     * \param t Тип узла.
+     * \param l Левый дочерний узел.
+     * \param r Правый дочерний узел.
+     */
     TreeNode(const QString& val, TreeNodeType t, TreeNode* l = nullptr, TreeNode* r = nullptr)
         : value(val), left(l), right(r), type(t) {}
 

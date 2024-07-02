@@ -65,7 +65,4 @@ QString treeToString(TreeNode* root, QList<Error>& errors);
  */
 void convertToLess(TreeNode*& root, QList<Error>& errors);
 
-
-bool isUnaryOperator(const QString& value);
-
 #endif // FUNCTIONS_H
